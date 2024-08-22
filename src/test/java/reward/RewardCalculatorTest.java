@@ -34,7 +34,7 @@ class RewardCalculatorTest {
     }
 
     @Test
-    void testCalculateRewardSingleWinningCombinationsForSingleSymbol() {
+    void testCalculateRewardSingleWinningCombinationsForSingleSymbolWithEmptyBonus() {
         Symbol symbol = new Symbol(BigDecimal.valueOf(2), "standard", null, null);
 
         WinCombination winCombination = new WinCombination();
@@ -48,5 +48,29 @@ class RewardCalculatorTest {
         BigDecimal reward = rewardCalculator.calculateReward(bettingAmount, symbols, appliedWinCombinations,
                                                              bonusSymbol);
         assertEquals(BigDecimal.valueOf(300.0), reward);
+    }
+
+    @Test
+    void testCalculateRewardMultipleWinningCombinationsForSingleSymbolWithEmptyBonus() {
+        Symbol symbol = new Symbol(BigDecimal.valueOf(2), "standard", null, null);
+
+        WinCombination winCombinationOne = new WinCombination();
+        winCombinationOne.setRewardMultiplier(BigDecimal.valueOf(1.5));
+
+        WinCombination winCombinationTwo = new WinCombination();
+        winCombinationTwo.setRewardMultiplier(BigDecimal.valueOf(2));
+
+        WinCombination winCombinationThree = new WinCombination();
+        winCombinationThree.setRewardMultiplier(BigDecimal.valueOf(3));
+
+        Map<String, List<WinCombination>> appliedWinCombinations = Map.of("A", List.of(winCombinationOne,
+                                                                                       winCombinationTwo, winCombinationThree));
+        String bonusSymbol = "";
+        Map<String, Symbol> symbols = Map.of("A", symbol);
+        BigDecimal bettingAmount = BigDecimal.valueOf(100);
+
+        BigDecimal reward = rewardCalculator.calculateReward(bettingAmount, symbols, appliedWinCombinations,
+                                                             bonusSymbol);
+        assertEquals(BigDecimal.valueOf(1800.0), reward);
     }
 }
