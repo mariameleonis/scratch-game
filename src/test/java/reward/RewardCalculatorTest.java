@@ -51,6 +51,7 @@ class RewardCalculatorTest {
 
         Symbol bonusExtra = new Symbol(null, "bonus", ImpactType.EXTRA_BONUS, BigDecimal.valueOf(1000));
         Symbol bonusMultiply = new Symbol(BigDecimal.valueOf(5), "bonus", ImpactType.MULTIPLY_REWARD, null);
+        Symbol bonusMiss = new Symbol(null, "bonus", ImpactType.MISS, null);
 
         return Stream.of(
                 Arguments.of(new CalculateRewardTestCase(
@@ -68,6 +69,14 @@ class RewardCalculatorTest {
                         Map.of("A", symbol),
                         BigDecimal.valueOf(300.0),
                         "Test with single winning combination and empty bonus"
+                )),
+                Arguments.of(new CalculateRewardTestCase(
+                        BigDecimal.valueOf(100),
+                        Map.of("A", List.of(winCombinationOne)),
+                        "MISS",
+                        Map.of("A", symbol, "MISS", bonusMiss),
+                        BigDecimal.valueOf(300.0),
+                        "Test with single winning combination and MISS bonus"
                 )),
                 Arguments.of(new CalculateRewardTestCase(
                         BigDecimal.valueOf(100),
