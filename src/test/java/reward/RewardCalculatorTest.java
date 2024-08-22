@@ -69,6 +69,23 @@ class RewardCalculatorTest {
     }
 
     @Test
+    void testCalculateRewardSingleWinningCombinationsForSingleSymbolWithMultiplyBonus() {
+        Symbol symbol = new Symbol(BigDecimal.valueOf(2), "standard", null, null);
+
+        WinCombination winCombination = new WinCombination();
+        winCombination.setRewardMultiplier(BigDecimal.valueOf(1.5));
+
+        Map<String, List<WinCombination>> appliedWinCombinations = Map.of("A", List.of(winCombination));
+        Symbol bonusSymbol = new Symbol(BigDecimal.valueOf(5), "bonus", ImpactType.MULTIPLY_REWARD, null);
+        Map<String, Symbol> symbols = Map.of("A", symbol, "x5", bonusSymbol);
+        BigDecimal bettingAmount = BigDecimal.valueOf(100);
+
+        BigDecimal reward = rewardCalculator.calculateReward(bettingAmount, symbols, appliedWinCombinations,
+                                                             "x5");
+        assertEquals(BigDecimal.valueOf(1500.0), reward);
+    }
+
+    @Test
     void testCalculateRewardMultipleWinningCombinationsForSingleSymbolWithEmptyBonus() {
         Symbol symbol = new Symbol(BigDecimal.valueOf(2), "standard", null, null);
 
