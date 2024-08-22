@@ -25,9 +25,9 @@ public class GameOutcomeFactory {
 
     public GameOutcome createGameOutcome(GameBoard board, Map<String, List<String>> appliedWinCombinations,
                                          BigDecimal bettingAmount) {
-        return appliedWinCombinations.isEmpty() ? createLostOutcome(board.board()) : createWinningOutcome(board,
-                                                                                                          appliedWinCombinations,
-                                                                                                          bettingAmount);
+        return appliedWinCombinations.isEmpty() ? createLostOutcome(board.matrix()) : createWinningOutcome(board,
+                                                                                                           appliedWinCombinations,
+                                                                                                           bettingAmount);
     }
 
     private GameOutcome createWinningOutcome(GameBoard board, Map<String, List<String>> appliedWinCombinations,
@@ -39,7 +39,7 @@ public class GameOutcomeFactory {
                                                                   board.bonusSymbol());
         String bonusSymbol = "MISS".equals(board.bonusSymbol()) ? null : board.bonusSymbol();
 
-        return new GameOutcome(board.board(), totalReward, appliedWinCombinations, bonusSymbol);
+        return new GameOutcome(board.matrix(), totalReward, appliedWinCombinations, bonusSymbol);
     }
 
     public GameOutcome createLostOutcome(String[][] board) {

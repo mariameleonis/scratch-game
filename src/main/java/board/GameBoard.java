@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Set;
 
 public record GameBoard(
-        String[][] board,
-        Map<String, Set<String>> coordinates,
+        String[][] matrix,
+        Map<String, Set<String>> symbolCoordinatesMap,
         String bonusSymbol
 ) {
 }

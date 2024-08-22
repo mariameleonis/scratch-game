@@ -11,10 +11,25 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class is responsible for analyzing the game board and determining the outcome
+ * based on the current state of the board and the betting amount.
+ * <p>
+ * The class first identifies potential win candidates on the board, which are positions
+ * where symbols match predefined winning conditions. If any win candidates are found,
+ * they are further analyzed to collect the actual win combinations. The final game outcome
+ * is then generated based on these win combinations and the betting amount.
+ * </p>
+ */
 public class GameAnalyzer {
 
     private final WinCombinationCollector winCombinationCollector;
     private final GameOutcomeFactory gameOutcomeFactory;
+
+    /**
+     * This value represents the minimum but not necessarily sufficient condition for a symbol
+     * to be considered a candidate for winning.
+     */
     private final int minSymbolFrequencyNeededForWin;
 
     public GameAnalyzer(Map<String, WinCombination> winCombinations,
@@ -28,7 +43,7 @@ public class GameAnalyzer {
     }
 
     public GameOutcome analyze(GameBoard board, BigDecimal bettingAmount) {
-        Map<String, List<String>> appliedWinCombinations = getAppliedWinCombinations(board.coordinates());
+        Map<String, List<String>> appliedWinCombinations = getAppliedWinCombinations(board.symbolCoordinatesMap());
         return gameOutcomeFactory.createGameOutcome(board, appliedWinCombinations, bettingAmount);
     }
 
