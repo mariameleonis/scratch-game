@@ -8,21 +8,18 @@ import outcome.GameOutcomeFactory;
 import reward.RewardCalculator;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameAnalyzer {
 
-    private final WinCombinationChecker winCombinationChecker;
+    private final WinCombinationCollector winCombinationCollector;
     private final GameOutcomeFactory gameOutcomeFactory;
     private final int minSymbolFrequencyNeededForWin;
 
     public GameAnalyzer(Map<String, WinCombination> winCombinations,
                         Map<String, Symbol> symbols) {
-        this.winCombinationChecker = new WinCombinationChecker(winCombinations);
+        this.winCombinationCollector = new WinCombinationCollector(winCombinations);
         this.gameOutcomeFactory = new GameOutcomeFactory(new RewardCalculator(),
                                                          symbols,
                                                          winCombinations);
@@ -31,14 +28,15 @@ public class GameAnalyzer {
     }
 
     public GameOutcome analyze(GameBoard board, BigDecimal bettingAmount) {
-        return Optional.ofNullable(filterWinCandidates(board.coordinates()))
-                       .filter(winCandidates -> !winCandidates.isEmpty())
-                       .map(winCombinationChecker::determineWinningCombinations)
-                       .filter(appliedWinCombinations -> !appliedWinCombinations.isEmpty())
-                       .map(appliedWinCombinations -> gameOutcomeFactory.createWinningOutcome(
-                               board, appliedWinCombinations, bettingAmount))
-                       .orElseGet(() -> gameOutcomeFactory.createLostOutcome(
-                               board.board()));
+        Map<String, List<String>> appliedWinCombinations = getAppliedWinCombinations(board.coordinates());
+        return gameOutcomeFactory.createGameOutcome(board, appliedWinCombinations, bettingAmount);
+    }
+
+    private Map<String, List<String>> getAppliedWinCombinations(Map<String, Set<String>> coordinates) {
+        Map<String, Set<String>> winCandidates = filterWinCandidates(coordinates);
+        return winCandidates.isEmpty() ? Collections.emptyMap() : winCombinationCollector.collectWinCombinations(
+                winCandidates);
+
     }
 
     private Map<String, Set<String>> filterWinCandidates(

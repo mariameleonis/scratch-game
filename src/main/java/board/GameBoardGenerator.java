@@ -48,21 +48,26 @@ public class GameBoardGenerator {
         List<SymbolProbability> bonusProbabilities = createProbabilities(bonusSymbols.symbols());
 
         Random random = new Random();
+
         int randomRow = random.nextInt(rows);
         int randomCol = random.nextInt(cols);
-        String currentSymbol = matrix[randomRow][randomCol];
 
-        if (coordinatesMap.containsKey(currentSymbol)) {
-            Set<String> coordinatesSet = coordinatesMap.get(currentSymbol);
-            coordinatesSet.remove(randomRow + ":" + randomCol);
-            if (coordinatesSet.isEmpty()) {
-                coordinatesMap.remove(currentSymbol);
-            }
-        }
+        removeFromCoordinatesMap(matrix, coordinatesMap, randomRow, randomCol);
 
         String bonusSymbol = randomSymbolGenerator.getRandomSymbol(bonusProbabilities);
         matrix[randomRow][randomCol] = bonusSymbol;
+
         return bonusSymbol;
+    }
+
+    private static void removeFromCoordinatesMap(String[][] matrix, Map<String, Set<String>> coordinatesMap, int randomRow,
+                                  int randomCol) {
+        String currentSymbol = matrix[randomRow][randomCol];
+
+        coordinatesMap.computeIfPresent(currentSymbol, (key, coordinatesSet) -> {
+            coordinatesSet.remove(randomRow + ":" + randomCol);
+            return coordinatesSet.isEmpty() ? null : coordinatesSet;
+        });
     }
 
     private String getKey(int row, int column) {

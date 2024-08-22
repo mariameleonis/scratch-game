@@ -10,13 +10,13 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class WinCombinationCheckerTest {
+class WinCombinationCollectorTest {
 
-    private WinCombinationChecker checker;
+    private WinCombinationCollector checker;
     private Map<String, WinCombination> winCombinations;
 
     @BeforeEach
-    void setUp() {
+        void setUp() {
         winCombinations = new HashMap<>();
 
         winCombinations.put("same_symbols_horizontally", MockWinCombination.createLinearSymbolMockWinCombination("same_symbols_horizontally", BigDecimal.valueOf(2), "horizontally_linear_symbols", List.of(List.of("0:0", "0:1", "0:2"), List.of("1:0", "1:1", "1:2"), List.of("2:0", "2:1", "2:2"))));
@@ -28,7 +28,7 @@ class WinCombinationCheckerTest {
         winCombinations.put("t-tetromino", MockWinCombination.createTTetrominoMockWinCombination("t-tetromino", BigDecimal.valueOf(15)));
         winCombinations.put("z-tetromino", MockWinCombination.createZTetrominoMockWinCombination("z-tetromino", BigDecimal.valueOf(20)));
 
-        checker = new WinCombinationChecker(winCombinations);
+        checker = new WinCombinationCollector(winCombinations);
     }
 
     @Test
@@ -39,7 +39,7 @@ class WinCombinationCheckerTest {
         winCandidates.put("Z", Set.of("0:0"));
         winCandidates.put("W", Set.of("2:1"));
 
-        Map<String, List<String>> result = checker.determineWinningCombinations(winCandidates);
+        Map<String, List<String>> result = checker.collectWinCombinations(winCandidates);
 
         assertEquals(2, result.size());
         assertTrue(result.get("X").containsAll(List.of("z-tetromino", "same_symbol_4_times")));
@@ -53,7 +53,7 @@ class WinCombinationCheckerTest {
         Map<String, Set<String>> winCandidates = new HashMap<>();
         winCandidates.put("X", Collections.emptySet());
 
-        Map<String, List<String>> result = checker.determineWinningCombinations(winCandidates);
+        Map<String, List<String>> result = checker.collectWinCombinations(winCandidates);
 
         assertTrue(result.isEmpty());
     }
@@ -64,7 +64,7 @@ class WinCombinationCheckerTest {
         winCandidates.put("Z", Set.of("0:0"));
         winCandidates.put("W", Set.of("2:1"));
 
-        Map<String, List<String>> result = checker.determineWinningCombinations(winCandidates);
+        Map<String, List<String>> result = checker.collectWinCombinations(winCandidates);
 
         assertTrue(result.isEmpty());
     }
@@ -74,7 +74,7 @@ class WinCombinationCheckerTest {
         Map<String, Set<String>> winCandidates = new HashMap<>();
         winCandidates.put("X", Set.of("0:1", "1:0", "1:1", "2:0", "0:2", "1:2"));
 
-        Map<String, List<String>> result = checker.determineWinningCombinations(winCandidates);
+        Map<String, List<String>> result = checker.collectWinCombinations(winCandidates);
 
         assertEquals(1, result.size());
         assertTrue(result.get("X").containsAll(List.of("z-tetromino", "same_symbol_5_times", "same_symbols_horizontally")));

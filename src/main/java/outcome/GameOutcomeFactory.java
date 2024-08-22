@@ -23,7 +23,14 @@ public class GameOutcomeFactory {
         this.winCombinations = winCombinations;
     }
 
-    public GameOutcome createWinningOutcome(GameBoard board, Map<String, List<String>> appliedWinCombinations,
+    public GameOutcome createGameOutcome(GameBoard board, Map<String, List<String>> appliedWinCombinations,
+                                         BigDecimal bettingAmount) {
+        return appliedWinCombinations.isEmpty() ? createLostOutcome(board.board()) : createWinningOutcome(board,
+                                                                                                          appliedWinCombinations,
+                                                                                                          bettingAmount);
+    }
+
+    private GameOutcome createWinningOutcome(GameBoard board, Map<String, List<String>> appliedWinCombinations,
                                             BigDecimal bettingAmount) {
         Map<String, List<WinCombination>> appliedWinCombinationsBySymbolMap = convertToWinCombinationMap(
                 appliedWinCombinations);
@@ -47,5 +54,7 @@ public class GameOutcomeFactory {
                                              entry -> entry.getValue().stream().map(winCombinations::get).toList()
                                      ));
     }
+
+
 }
 

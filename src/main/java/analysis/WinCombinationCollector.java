@@ -5,28 +5,28 @@ import config.WinCombination;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class WinCombinationChecker {
+public class WinCombinationCollector {
 
     private final Map<String, WinCombination> winCombinations;
 
-    public WinCombinationChecker(Map<String, WinCombination> winCombinations) {
+    public WinCombinationCollector(Map<String, WinCombination> winCombinations) {
         this.winCombinations = winCombinations;
     }
 
-    public Map<String, List<String>> determineWinningCombinations(Map<String, Set<String>> winCandidates) {
+    public Map<String, List<String>> collectWinCombinations(Map<String, Set<String>> winCandidates) {
         return winCandidates.entrySet().stream()
-                            .map(entry -> Map.entry(entry.getKey(), findWinningCombinations(entry.getValue())))
+                            .map(entry -> Map.entry(entry.getKey(), checkWinCombinations(entry.getValue())))
                             .filter(entry -> !entry.getValue().isEmpty())
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private List<String> findWinningCombinations(Set<String> candidateCoordinates) {
-        Map<String, List<WinCombination>> combinationsByGroup = groupCombinationsByGroup(candidateCoordinates);
-        Map<String, WinCombination> maxRewardMultiplierByGroup = getMaxRewardMultiplierByGroup(combinationsByGroup);
-        return extractCombinationNames(maxRewardMultiplierByGroup);
+    private List<String> checkWinCombinations(Set<String> candidateCoordinates) {
+        Map<String, List<WinCombination>> combinationsByGroup = getAllApplicableWinCombinationsByGroup(candidateCoordinates);
+        Map<String, WinCombination> appliedWinCombinations = filterByMaxRewardMultiplier(combinationsByGroup);
+        return extractCombinationNames(appliedWinCombinations);
     }
 
-    private Map<String, List<WinCombination>> groupCombinationsByGroup(Set<String> candidateCoordinates) {
+    private Map<String, List<WinCombination>> getAllApplicableWinCombinationsByGroup(Set<String> candidateCoordinates) {
         return winCombinations.entrySet().stream()
                               .filter(entry -> entry.getValue().getWhen()
                                                     .checkWin(entry.getValue(), candidateCoordinates))
@@ -39,7 +39,7 @@ public class WinCombinationChecker {
                               ));
     }
 
-    private Map<String, WinCombination> getMaxRewardMultiplierByGroup(
+    private Map<String, WinCombination> filterByMaxRewardMultiplier(
             Map<String, List<WinCombination>> combinationsByGroup) {
         return combinationsByGroup.entrySet().stream()
                                   .collect(Collectors.toMap(
