@@ -7,8 +7,10 @@ import config.WinCombination;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class RewardCalculator {
+
     public BigDecimal calculateReward(BigDecimal bettingAmount, Map<String, Symbol> allSymbols,
                                       Map<String, List<WinCombination>> appliedWinCombinations, String bonusSymbol) {
         BigDecimal totalReward = appliedWinCombinations.entrySet().stream()
@@ -17,7 +19,7 @@ public class RewardCalculator {
                                                                                                         entry.getKey())))
                                                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return applyBonusSymbol(totalReward, allSymbols.get(bonusSymbol));
+        return applyBonusSymbol(totalReward, allSymbols, bonusSymbol);
     }
 
     private BigDecimal calculateCombinationReward(BigDecimal bettingAmount,
@@ -35,9 +37,16 @@ public class RewardCalculator {
                            .reduce(BigDecimal.ONE, BigDecimal::multiply);
     }
 
-    private BigDecimal applyBonusSymbol(BigDecimal totalReward, Symbol bonusSymbol) {
+    private BigDecimal applyBonusSymbol(BigDecimal totalReward, Map<String, Symbol> allSymbols, String bonusSymbol) {
+        return Optional.ofNullable(bonusSymbol)
+                .map(it -> applyImpact(totalReward, allSymbols.get(it)))
+                .orElse(totalReward);
+    }
 
-        ImpactType impact = bonusSymbol.impact();
+    private BigDecimal applyImpact(BigDecimal totalReward, Symbol bonusSymbol) {
+        ImpactType impact = Optional.ofNullable(bonusSymbol)
+                                    .map(Symbol::impact)
+                                    .orElse(ImpactType.MISS);
 
         return switch (impact) {
             case EXTRA_BONUS -> totalReward.add(bonusSymbol.extra());
@@ -45,5 +54,4 @@ public class RewardCalculator {
             case MISS -> totalReward;
         };
     }
-
 }
