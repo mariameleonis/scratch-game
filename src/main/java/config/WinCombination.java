@@ -33,6 +33,10 @@ public class WinCombination {
         this.name = name;
     }
 
+    public void setRewardMultiplier(BigDecimal rewardMultiplier) {
+        this.rewardMultiplier = rewardMultiplier;
+    }
+
     public String getName() {
         return name;
     }
