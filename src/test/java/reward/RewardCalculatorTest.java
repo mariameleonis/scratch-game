@@ -38,7 +38,8 @@ class RewardCalculatorTest {
     }
 
     private static Stream<Arguments> provideTestCases() {
-        Symbol symbol = new Symbol(BigDecimal.valueOf(2), "standard", null, null);
+        Symbol symbolA = new Symbol(BigDecimal.valueOf(2), "standard", null, null);
+        Symbol symbolB = new Symbol(BigDecimal.valueOf(3), "standard", null, null);
 
         WinCombination winCombinationOne = new WinCombination();
         winCombinationOne.setRewardMultiplier(BigDecimal.valueOf(1.5));
@@ -60,47 +61,88 @@ class RewardCalculatorTest {
                         "",
                         Collections.emptyMap(),
                         BigDecimal.ZERO,
-                        "Test with empty winning combinations and empty bonus symbol"
+                        "Test with empty winning combinations and empty bonus symbolA"
                 )),
                 Arguments.of(new CalculateRewardTestCase(
                         BigDecimal.valueOf(100),
                         Map.of("A", List.of(winCombinationOne)),
                         "",
-                        Map.of("A", symbol),
+                        Map.of("A", symbolA),
                         BigDecimal.valueOf(300.0),
-                        "Test with single winning combination and empty bonus"
+                        "Test with single winning combination for single symbol and empty bonus"
                 )),
                 Arguments.of(new CalculateRewardTestCase(
                         BigDecimal.valueOf(100),
                         Map.of("A", List.of(winCombinationOne)),
                         "MISS",
-                        Map.of("A", symbol, "MISS", bonusMiss),
+                        Map.of("A", symbolA, "MISS", bonusMiss),
                         BigDecimal.valueOf(300.0),
-                        "Test with single winning combination and MISS bonus"
+                        "Test with single winning combination for single symbol and MISS bonus"
                 )),
                 Arguments.of(new CalculateRewardTestCase(
                         BigDecimal.valueOf(100),
                         Map.of("A", List.of(winCombinationOne)),
                         "+1000",
-                        Map.of("A", symbol, "+1000", bonusExtra),
+                        Map.of("A", symbolA, "+1000", bonusExtra),
                         BigDecimal.valueOf(1300.0),
-                        "Test with single winning combination and extra bonus"
+                        "Test with single winning combination for single symbol and extra bonus"
                 )),
                 Arguments.of(new CalculateRewardTestCase(
                         BigDecimal.valueOf(100),
                         Map.of("A", List.of(winCombinationOne)),
                         "x5",
-                        Map.of("A", symbol, "x5", bonusMultiply),
+                        Map.of("A", symbolA, "x5", bonusMultiply),
                         BigDecimal.valueOf(1500.0),
-                        "Test with single winning combination and multiply bonus"
+                        "Test with single winning combination for single symbol and multiply bonus"
                 )),
                 Arguments.of(new CalculateRewardTestCase(
                         BigDecimal.valueOf(100),
                         Map.of("A", List.of(winCombinationOne, winCombinationTwo, winCombinationThree)),
                         "",
-                        Map.of("A", symbol),
+                        Map.of("A", symbolA),
                         BigDecimal.valueOf(1800.0),
-                        "Test with multiple winning combinations and empty bonus"
+                        "Test with multiple winning combinations for single symbol and empty bonus"
+                )),
+                Arguments.of(new CalculateRewardTestCase(
+                        BigDecimal.valueOf(100),
+                        Map.of("A", List.of(winCombinationOne, winCombinationTwo, winCombinationThree)),
+                        "MISS",
+                        Map.of("A", symbolA, "MISS", bonusMiss),
+                        BigDecimal.valueOf(1800.0),
+                        "Test with multiple winning combinations for single symbol and MISS bonus"
+                )),
+                Arguments.of(new CalculateRewardTestCase(
+                        BigDecimal.valueOf(100),
+                        Map.of("A", List.of(winCombinationOne, winCombinationTwo),
+                               "B", List.of(winCombinationThree)),
+                        "MISS",
+                        Map.of("A", symbolA,
+                               "B", symbolB,
+                               "MISS", bonusMiss),
+                        BigDecimal.valueOf(1500.0),
+                        "Test with multiple winning combinations for multiple symbols and MISS bonus"
+                )),
+                Arguments.of(new CalculateRewardTestCase(
+                        BigDecimal.valueOf(100),
+                        Map.of("A", List.of(winCombinationOne, winCombinationTwo),
+                               "B", List.of(winCombinationThree)),
+                        "+1000",
+                        Map.of("A", symbolA,
+                               "B", symbolB,
+                               "+1000", bonusExtra),
+                        BigDecimal.valueOf(2500.0),
+                        "Test with multiple winning combinations for multiple symbols and extra bonus"
+                )),
+                Arguments.of(new CalculateRewardTestCase(
+                        BigDecimal.valueOf(100),
+                        Map.of("A", List.of(winCombinationOne, winCombinationTwo),
+                               "B", List.of(winCombinationThree)),
+                        "x5",
+                        Map.of("A", symbolA,
+                               "B", symbolB,
+                               "x5", bonusMultiply),
+                        BigDecimal.valueOf(7500.0),
+                        "Test with multiple winning combinations for multiple symbols and multiply bonus"
                 ))
         );
     }
