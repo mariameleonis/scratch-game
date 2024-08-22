@@ -24,12 +24,29 @@ class RewardCalculatorTest {
     @Test
     void testCalculateRewardEmptyWinningCombinationsAndEmptyBonusSymbol() {
         Map<String, List<WinCombination>> appliedWinCombinations = Collections.emptyMap();
-        String bonusSymbolValue = "";
+        String bonusSymbol = "";
         Map<String, Symbol> symbols = Collections.emptyMap();
         BigDecimal bettingAmount = BigDecimal.valueOf(100);
 
         BigDecimal reward = rewardCalculator.calculateReward(bettingAmount, symbols, appliedWinCombinations,
-                                                             bonusSymbolValue);
+                                                             bonusSymbol);
         assertEquals(0, reward.signum());
+    }
+
+    @Test
+    void testCalculateRewardSingleWinningCombinationsForSingleSymbol() {
+        Symbol symbol = new Symbol(BigDecimal.valueOf(2), "standard", null, null);
+
+        WinCombination winCombination = new WinCombination();
+        winCombination.setRewardMultiplier(BigDecimal.valueOf(1.5));
+
+        Map<String, List<WinCombination>> appliedWinCombinations = Map.of("A", List.of(winCombination));
+        String bonusSymbol = "";
+        Map<String, Symbol> symbols = Map.of("A", symbol);
+        BigDecimal bettingAmount = BigDecimal.valueOf(100);
+
+        BigDecimal reward = rewardCalculator.calculateReward(bettingAmount, symbols, appliedWinCombinations,
+                                                             bonusSymbol);
+        assertEquals(BigDecimal.valueOf(300.0), reward);
     }
 }
