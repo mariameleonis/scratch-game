@@ -1,5 +1,6 @@
 package reward;
 
+import config.ImpactType;
 import config.Symbol;
 import config.WinCombination;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,23 @@ class RewardCalculatorTest {
         BigDecimal reward = rewardCalculator.calculateReward(bettingAmount, symbols, appliedWinCombinations,
                                                              bonusSymbol);
         assertEquals(BigDecimal.valueOf(300.0), reward);
+    }
+
+    @Test
+    void testCalculateRewardSingleWinningCombinationsForSingleSymbolWithExtraBonus() {
+        Symbol symbol = new Symbol(BigDecimal.valueOf(2), "standard", null, null);
+
+        WinCombination winCombination = new WinCombination();
+        winCombination.setRewardMultiplier(BigDecimal.valueOf(1.5));
+
+        Map<String, List<WinCombination>> appliedWinCombinations = Map.of("A", List.of(winCombination));
+        Symbol bonusSymbol = new Symbol(null, "bonus", ImpactType.EXTRA_BONUS, BigDecimal.valueOf(1000));
+        Map<String, Symbol> symbols = Map.of("A", symbol, "+1000", bonusSymbol);
+        BigDecimal bettingAmount = BigDecimal.valueOf(100);
+
+        BigDecimal reward = rewardCalculator.calculateReward(bettingAmount, symbols, appliedWinCombinations,
+                                                             "+1000");
+        assertEquals(BigDecimal.valueOf(1300.0), reward);
     }
 
     @Test
